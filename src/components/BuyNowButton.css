@@ -1,0 +1,39 @@
+.buy-now-section {
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.buy-now-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.buy-now-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.buy-now-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.buy-now-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buy-now-button.loading {
+  cursor: wait;
+}
+
+.button-price {
+  font-size: 0.9em;
+  opacity: 0.9;
+}

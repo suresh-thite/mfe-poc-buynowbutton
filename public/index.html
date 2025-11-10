@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Now MFE Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f7;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .demo-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e5e7;
+            border-radius: 8px;
+        }
+        .demo-section h3 {
+            margin-top: 0;
+            color: #1d1d1f;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .control-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #1d1d1f;
+        }
+        .control-group input, .control-group select {
+            padding: 8px 12px;
+            border: 1px solid #d2d2d7;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .control-group input[type="color"] {
+            height: 40px;
+            padding: 4px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100px;
+            border: 2px dashed #d2d2d7;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .product-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .product-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1d1d1f;
+        }
+        .product-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FF3B30;
+            margin-bottom: 10px;
+        }
+        .product-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Buy Now MFE Demo</h1>
+        <p>React-based Micro Frontend for Buy Now button with product data logging and API validation.</p>
+        
+        <div class="product-info">
+            <h2 class="product-title">Sample Product</h2>
+            <div class="product-price">$29.99</div>
+            <p class="product-description">This is a sample product for testing the Buy Now MFE integration.</p>
+        </div>
+        
+        <div class="demo-section">
+            <h3>Customization</h3>
+            <div class="controls">
+                <div class="control-group">
+                    <label for="buttonColor">Color</label>
+                    <input type="color" id="buttonColor" value="#FF3B30">
+                </div>
+                <div class="control-group">
+                    <label for="buttonSize">Size</label>
+                    <select id="buttonSize">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="buttonLabel">Label</label>
+                    <input type="text" id="buttonLabel" value="Buy Now">
+                </div>
+                <div class="control-group">
+                    <label for="productPrice">Price</label>
+                    <input type="number" id="productPrice" value="29.99" step="0.01">
+                </div>
+                <div class="control-group">
+                    <label for="isEnabled">Enabled</label>
+                    <select id="isEnabled">
+                        <option value="true" selected>Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="showPrice">Show Price</label>
+                    <select id="showPrice">
+                        <option value="true" selected>Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Buy Now Button</h3>
+            <div class="button-container" id="buy-now-container">
+                <!-- MFE will be mounted here -->
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Integration</h3>
+            <div class="code-block">
+<pre>// Load the MFE
+&lt;script src="buy-now-mfe.js"&gt;&lt;/script&gt;
+
+// Initialize
+BuyNowMFE.init({
+    containerId: 'buy-now-container',
+    config: {
+        productId: 'PROD-001',
+        productName: 'Sample Product',
+        productPrice: 29.99,
+        productCurrency: 'USD',
+        color: '#FF3B30',
+        size: 'medium',
+        label: 'Buy Now',
+        enabled: true,
+        showPrice: true,
+        apiEndpoint: 'https://api.example.com/purchase'
+    },
+    onBuyNow: function(purchaseData) {
+        console.log('Purchase data:', purchaseData);
+    },
+    onValidation: async function(validationData) {
+        console.log('Validation data:', validationData);
+        return true;
+    }
+});</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load React and Buy Now MFE -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="http://localhost:3001/buy-now-mfe.js"></script>
+    
+    <script>
+        // Wait for React and ReactDOM to load before initializing
+        function waitForReact(callback) {
+            if (typeof React !== 'undefined' && typeof ReactDOM !== 'undefined' && typeof BuyNowMFE !== 'undefined') {
+                callback();
+            } else {
+                setTimeout(() => waitForReact(callback), 100);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            waitForReact(() => {
+                console.log('React, ReactDOM, and BuyNowMFE are all loaded');
+                
+                const controls = {
+                    buttonColor: document.getElementById('buttonColor'),
+                    buttonSize: document.getElementById('buttonSize'),
+                    buttonLabel: document.getElementById('buttonLabel'),
+                    productPrice: document.getElementById('productPrice'),
+                    isEnabled: document.getElementById('isEnabled'),
+                    showPrice: document.getElementById('showPrice')
+                };
+
+                function updateButton() {
+                    if (window.BuyNowMFE) {
+                        try {
+                            BuyNowMFE.updateConfig({
+                                color: controls.buttonColor.value,
+                                size: controls.buttonSize.value,
+                                label: controls.buttonLabel.value,
+                                productPrice: parseFloat(controls.productPrice.value),
+                                enabled: controls.isEnabled.value === 'true',
+                                showPrice: controls.showPrice.value === 'true'
+                            });
+                        } catch (error) {
+                            console.error('Error updating button:', error);
+                        }
+                    }
+                }
+
+                // Add event listeners
+                Object.values(controls).forEach(control => {
+                    control.addEventListener('change', updateButton);
+                    control.addEventListener('input', updateButton);
+                });
+
+                // Initialize the MFE
+                try {
+                    if (window.BuyNowMFE) {
+                        console.log('Initializing Buy Now MFE...');
+                        const instanceId = BuyNowMFE.init({
+                            containerId: 'buy-now-container',
+                            config: {
+                                productId: 'PROD-001',
+                                productName: 'Sample Product',
+                                productPrice: parseFloat(controls.productPrice.value),
+                                productCurrency: 'USD',
+                                productDescription: 'This is a sample product for testing the Buy Now MFE integration.',
+                                color: controls.buttonColor.value,
+                                size: controls.buttonSize.value,
+                                label: controls.buttonLabel.value,
+                                enabled: controls.isEnabled.value === 'true',
+                                showPrice: controls.showPrice.value === 'true',
+                                apiEndpoint: 'https://api.example.com/purchase',
+                                validateBeforePurchase: true
+                            },
+                            onBuyNow: function(purchaseData) {
+                                console.log('🛒 Buy Now initiated:', purchaseData);
+                                
+                                // Show purchase result
+                                const container = document.getElementById('buy-now-container');
+                                container.innerHTML = `
+                                    <div style="text-align: center; padding: 20px; color: #28a745;">
+                                        <h3>✅ Purchase Successful!</h3>
+                                        <p>Thank you for your purchase!</p>
+                                        <p>Product: ${purchaseData.productName}</p>
+                                        <p>Price: $${purchaseData.productPrice.toFixed(2)}</p>
+                                        <p>Transaction ID: ${purchaseData.sessionId}</p>
+                                        <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                            Try Again
+                                        </button>
+                                    </div>
+                                `;
+                            },
+                            onInit: function(initData) {
+                                console.log('✅ Buy Now Button initialized:', initData);
+                            },
+                            onValidation: async function(validationData) {
+                                console.log('🔍 Product validation:', validationData);
+                                return true;
+                            }
+                        });
+                        console.log('✅ MFE initialized successfully with ID:', instanceId);
+                    } else {
+                        console.error('BuyNowMFE is not available');
+                        document.getElementById('buy-now-container').innerHTML = 
+                            '<div style="color: red; padding: 10px;">Error: BuyNowMFE is not available. Please check the console.</div>';
+                    }
+                } catch (error) {
+                    console.error('❌ Error initializing Buy Now MFE:', error);
+                    document.getElementById('buy-now-container').innerHTML = 
+                        `<div style="color: red; padding: 10px; border: 1px solid red;">Error: ${error.message}</div>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
