@@ -19,70 +19,86 @@ const BuyNowButton = ({ config = {}, onBuyNow, onInit }) => {
 
   const handleClick = async () => {
     console.log('handleClick', config, isLoading);
-
+    setIsLoading(true);
+    // Example for API integration  and response will send back to the host application
     try {
-      const ledgerApiUrl = 'https://hogwartz.d05d0001.residentportaldev.com/api/?controller=ledger&action=getSettings'; // Getting an CORS error
-      // const ledgerApiUrl = 'https://jsonplaceholder.typicode.com/todos/1' // it's working fine
+      // const ledgerApiUrl = 'https://hogwartz.d05d0001.residentportaldev.com/api/?controller=ledger&action=getSettings'; // Getting an CORS error
+      const ledgerApiUrl = 'https://jsonplaceholder.typicode.com/todos/1' // it's working fine
       
       const ledgerResponse = await fetch(ledgerApiUrl, {
         method: 'GET',
-        headers: {
-          'accept': 'application/json, text/plain, */*',
-          'accept-language': 'en-US,en;q=0.9',
-          'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJqdGkiOiI2MmVlZjEzNThlY2VjNjE5NDFjZjQ1NDciLCJpYXQiOjE3NjI1MTg2MDIsIm5iZiI6MTc2MjUxODYwMiwiZXhwIjoxNzYyNTM2NjAyLCJkYXRhIjp7ImRldmljZUlkIjowLCJjaWQiOjQ1NDcsImN1c3RvbWVySWQiOjMyMDk2MjkwLCJsZWFzZUlkIjoxNTc2MjM1NywicHJvcGVydHlJZCI6ODQ1NDAsIndlYnNpdGVJZCI6MjI0NDUsInJlYWRPbmx5IjpmYWxzZSwidXNlcm5hbWUiOiJwMkB0ZXN0LmxjbCIsImNvbnRhY3RVc2VySWQiOjAsImNvbXBhbnlVc2VySWQiOjB9fQ.g8xvXsa3QNQnMeHWyKTiD98BwrXm1vQhihZxAztqeHI8kqP8d3eTWHj_WHL4h7ktUSjHBde47zGuGfMzTnAbng',
-          "pragma": "no-cache",
-          "pragma": "no-cache",
-          "priority": "u=1, i",
-          "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
-          "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
-          "sec-ch-ua-mobile": "?0",
-          "sec-ch-ua-mobile": "?0",
-          "sec-ch-ua-platform": "\"macOS\"",
-          "sec-ch-ua-platform": "\"macOS\"",
-          "sec-fetch-dest": "empty",
-          "sec-fetch-mode": "cors",
-          "sec-fetch-site": "cross-site",
-          'x-consumer': 'rpweb',
-          'x-consumer-version': '1.0'
-        },
-        credentials: 'include' // Include cookies
+        // headers: {
+        //   'accept': 'application/json, text/plain, */*',
+        //   'accept-language': 'en-US,en;q=0.9',
+        //   'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJqdGkiOiI2MmVlZjEzNThlY2VjNjE5NDFjZjQ1NDciLCJpYXQiOjE3NjI1MTg2MDIsIm5iZiI6MTc2MjUxODYwMiwiZXhwIjoxNzYyNTM2NjAyLCJkYXRhIjp7ImRldmljZUlkIjowLCJjaWQiOjQ1NDcsImN1c3RvbWVySWQiOjMyMDk2MjkwLCJsZWFzZUlkIjoxNTc2MjM1NywicHJvcGVydHlJZCI6ODQ1NDAsIndlYnNpdGVJZCI6MjI0NDUsInJlYWRPbmx5IjpmYWxzZSwidXNlcm5hbWUiOiJwMkB0ZXN0LmxjbCIsImNvbnRhY3RVc2VySWQiOjAsImNvbXBhbnlVc2VySWQiOjB9fQ.g8xvXsa3QNQnMeHWyKTiD98BwrXm1vQhihZxAztqeHI8kqP8d3eTWHj_WHL4h7ktUSjHBde47zGuGfMzTnAbng',
+        //   "pragma": "no-cache",
+        //   "pragma": "no-cache",
+        //   "priority": "u=1, i",
+        //   "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+        //   "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+        //   "sec-ch-ua-mobile": "?0",
+        //   "sec-ch-ua-mobile": "?0",
+        //   "sec-ch-ua-platform": "\"macOS\"",
+        //   "sec-ch-ua-platform": "\"macOS\"",
+        //   "sec-fetch-dest": "empty",
+        //   "sec-fetch-mode": "cors",
+        //   "sec-fetch-site": "cross-site",
+        //   'x-consumer': 'rpweb',
+        //   'x-consumer-version': '1.0'
+        // },
+        // credentials: 'include' // Include cookies
       });
 
       if (ledgerResponse.ok) {
         const ledgerData = await ledgerResponse.json();
         console.log('📊 Ledger API Response:', ledgerData);
+
+        const purchaseData = {
+          productId: config.productId || '',
+          productName: config.productName || '',
+          productPrice: config.productPrice || 0,
+          productCurrency: config.productCurrency || 'USD',
+          timestamp: new Date().toISOString(),
+          apiResponse: ledgerData
+        };
+  
+        // Call onBuyNow callback
+        if (onBuyNow) {
+          onBuyNow(purchaseData);
+        }
       } else {
         console.warn('⚠️ Ledger API request failed:', ledgerResponse.status, ledgerResponse.statusText);
       }
     } catch (error) {
       console.error('❌ Ledger API call error:', error);
-    }
-
-    if (!config.enabled || isLoading) return;
-
-    setIsLoading(true);
-
-    try {
-      const purchaseData = {
-        productId: config.productId || '',
-        productName: config.productName || '',
-        productPrice: config.productPrice || 0,
-        productCurrency: config.productCurrency || 'USD',
-        timestamp: new Date().toISOString()
-      };
-
-      // Call onBuyNow callback
-      if (onBuyNow) {
-        onBuyNow(purchaseData);
-      }
-
-      // Simulate processing
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
-      console.error('Buy Now error:', error);
     } finally {
       setIsLoading(false);
     }
+
+
+    // Example for after purchanse send data to the host application
+
+    // try {
+    //   const purchaseData = {
+    //     productId: config.productId || '',
+    //     productName: config.productName || '',
+    //     productPrice: config.productPrice || 0,
+    //     productCurrency: config.productCurrency || 'USD',
+    //     timestamp: new Date().toISOString()
+    //   };
+
+    //   // Call onBuyNow callback
+    //   if (onBuyNow) {
+    //     onBuyNow(purchaseData);
+    //   }
+
+    //   // Simulate processing
+    //   await new Promise(resolve => setTimeout(resolve, 500));
+    // } catch (error) {
+    //   console.error('Buy Now error:', error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   const formatPrice = (price, currency) => {

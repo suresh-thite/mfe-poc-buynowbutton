@@ -19,7 +19,7 @@ const createBuyNowMFE = () => {
       throw new Error('containerId is required');
     }
 
-    // React and ReactDOM are now bundled, no need to check
+    // React and ReactDOM are bundled, so we use React 18's createRoot API directly
 
     const container = document.getElementById(containerId);
     if (!container) {
@@ -82,46 +82,25 @@ const createBuyNowMFE = () => {
     }
 
     // Render component using JSX (Babel will transform to React.createElement)
+    // Since React is bundled, we use React 18's createRoot API directly
     try {
-      if (ReactDOM.createRoot) {
-        // React 18+
-        const root = ReactDOM.createRoot(renderTarget);
-        root.render(
-          <BuyNowButton 
-            config={mergedConfig} 
-            onBuyNow={onBuyNow} 
-            onInit={onInit} 
-          />
-        );
-        
-        instances.set(instanceId, {
-          containerId,
-          config: mergedConfig,
-          root,
-          container,
-          shadowRoot,
-          shadowWrapper
-        });
-      } else {
-        // React 17
-        ReactDOM.render(
-          <BuyNowButton 
-            config={mergedConfig} 
-            onBuyNow={onBuyNow} 
-            onInit={onInit} 
-          />,
-          renderTarget
-        );
-        
-        instances.set(instanceId, {
-          containerId,
-          config: mergedConfig,
-          root: renderTarget,
-          container,
-          shadowRoot,
-          shadowWrapper
-        });
-      }
+      const root = ReactDOM.createRoot(renderTarget);
+      root.render(
+        <BuyNowButton 
+          config={mergedConfig} 
+          onBuyNow={onBuyNow} 
+          onInit={onInit} 
+        />
+      );
+      
+      instances.set(instanceId, {
+        containerId,
+        config: mergedConfig,
+        root,
+        container,
+        shadowRoot,
+        shadowWrapper
+      });
 
       return instanceId;
     } catch (error) {

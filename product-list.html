@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List - Buy Now MFE Integration</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f7;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1d1d1f;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #86868b;
+            margin-bottom: 40px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .product-info {
+            margin-bottom: 16px;
+        }
+        
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+        
+        .product-description {
+            font-size: 14px;
+            color: #86868b;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .product-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 16px;
+        }
+        
+        .product-currency {
+            font-size: 16px;
+            color: #86868b;
+            font-weight: 400;
+        }
+        
+        .button-container {
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .status-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-panel h3 {
+            margin-top: 0;
+            color: #1d1d1f;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .success { 
+            background: #d4edda; 
+            color: #155724; 
+        }
+        
+        .error { 
+            background: #f8d7da; 
+            color: #721c24; 
+        }
+        
+        .info { 
+            background: #d1ecf1; 
+            color: #0c5460; 
+        }
+        
+        .loading {
+            text-align: center;
+            color: #86868b;
+            padding: 20px;
+        }
+        
+        /* Host Application CSS for Buy Now Button (when useShadowDOM: false) */
+        .product-card .buy-now-button {
+            width: 100%;
+            background-color: #0071e3 !important;
+            border: none !important;
+            box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3) !important;
+        }
+        
+        .product-card .buy-now-button:hover:not(:disabled) {
+            background-color: #0077ed !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.4) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛍️ Product Catalog</h1>
+        <p class="subtitle">Multiple products with integrated Buy Now MFE buttons</p>
+        
+        <div class="products-grid" id="products-grid">
+            <div class="loading">Loading products...</div>
+        </div>
+        
+        <div class="status-panel">
+            <h3>Purchase Activity</h3>
+            <div id="status-container"></div>
+        </div>
+    </div>
+
+    <!-- Load MFE (React and ReactDOM are bundled) -->
+    <script src="http://localhost:3001/buy-now-mfe.js"></script>
+    
+    <script>
+        // Sample product data
+        const products = [
+            {
+                id: 'PROD-001',
+                name: 'Wireless Headphones',
+                description: 'Premium noise-cancelling headphones with 30-hour battery life',
+                price: 199.99,
+                currency: 'USD',
+                emoji: '🎧'
+            },
+            {
+                id: 'PROD-002',
+                name: 'Smart Watch',
+                description: 'Fitness tracker with heart rate monitor and GPS',
+                price: 299.99,
+                currency: 'USD',
+                emoji: '⌚'
+            },
+            {
+                id: 'PROD-003',
+                name: 'Laptop Stand',
+                description: 'Ergonomic aluminum stand for better posture',
+                price: 49.99,
+                currency: 'USD',
+                emoji: '💻'
+            },
+            {
+                id: 'PROD-004',
+                name: 'Mechanical Keyboard',
+                description: 'RGB backlit mechanical keyboard with Cherry MX switches',
+                price: 129.99,
+                currency: 'USD',
+                emoji: '⌨️'
+            },
+            {
+                id: 'PROD-005',
+                name: 'USB-C Hub',
+                description: '7-in-1 USB-C hub with HDMI, USB 3.0, and SD card reader',
+                price: 39.99,
+                currency: 'USD',
+                emoji: '🔌'
+            },
+            {
+                id: 'PROD-006',
+                name: 'Wireless Mouse',
+                description: 'Ergonomic wireless mouse with 2-year battery life',
+                price: 79.99,
+                currency: 'USD',
+                emoji: '🖱️'
+            }
+        ];
+
+        // Configuration
+        const useShadowDOM = false; // Set to true for Shadow DOM isolation
+        const shadowDOMMode = 'open';
+
+        function addStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            if (!container) return;
+            
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(div);
+            
+            // Auto-scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <div class="product-image">${product.emoji}</div>
+                <div class="product-info">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-description">${product.description}</div>
+                    <div class="product-price">
+                        ${new Intl.NumberFormat('en-US', {
+                            style: 'currency',
+                            currency: product.currency
+                        }).format(product.price)}
+                    </div>
+                </div>
+                <div class="button-container" id="buy-now-${product.id}">
+                    Loading...
+                </div>
+            `;
+            return card;
+        }
+
+        function initializeProductMFE(product) {
+            if (typeof BuyNowMFE === 'undefined') {
+                console.error('BuyNowMFE is not loaded');
+                return;
+            }
+
+            try {
+                const containerId = `buy-now-${product.id}`;
+                
+                const instanceId = BuyNowMFE.init({
+                    containerId: containerId,
+                    config: {
+                        productId: product.id,
+                        productName: product.name,
+                        productPrice: product.price,
+                        productCurrency: product.currency,
+                        color: '#0071e3',
+                        size: 'medium',
+                        label: 'Buy Now',
+                        enabled: true,
+                        showPrice: true,
+                        useShadowDOM: useShadowDOM,
+                        shadowDOMMode: shadowDOMMode
+                    },
+                    onBuyNow: function(purchaseData) {
+                        addStatus(
+                            `✅ Purchase initiated: ${purchaseData.productName} (${purchaseData.productId}) - ${new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: purchaseData.productCurrency
+                            }).format(purchaseData.productPrice)}`,
+                            'success'
+                        );
+                        console.log('🛒 Purchase data:', purchaseData);
+                    },
+                    onInit: function(initData) {
+                        console.log(`✅ Button initialized for ${product.name}:`, initData);
+                        
+                        if (useShadowDOM) {
+                            // Shadow DOM mode: Inject CSS
+                            BuyNowMFE.injectCSS(`
+                                .buy-now-section {
+                                    display: inline-block;
+                                    width: 100%;
+                                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                                }
+                                .buy-now-button {
+                                    display: inline-flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    gap: 12px;
+                                    width: 100%;
+                                    border: none;
+                                    color: white;
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                                }
+                                .buy-now-button:hover:not(:disabled) {
+                                    transform: translateY(-1px);
+                                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                                }
+                                .buy-now-button:active:not(:disabled) {
+                                    transform: translateY(0);
+                                }
+                                .buy-now-button:disabled {
+                                    opacity: 0.6;
+                                    cursor: not-allowed;
+                                }
+                                .buy-now-button {
+                                    background-color: #0071e3 !important;
+                                    border-radius: 8px !important;
+                                }
+                            `, instanceId);
+                        }
+                    }
+                });
+
+                return instanceId;
+            } catch (error) {
+                console.error(`Error initializing MFE for ${product.name}:`, error);
+                addStatus(`❌ Error initializing button for ${product.name}: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize when DOM and MFE are ready
+        (function() {
+            function init() {
+                if (typeof BuyNowMFE === 'undefined') {
+                    setTimeout(init, 50);
+                    return;
+                }
+
+                try {
+                    const productsGrid = document.getElementById('products-grid');
+                    if (!productsGrid) {
+                        console.error('Products grid not found');
+                        return;
+                    }
+
+                    // Clear loading message
+                    productsGrid.innerHTML = '';
+
+                    // Create product cards and initialize MFE for each
+                    const instanceIds = [];
+                    products.forEach(product => {
+                        const card = createProductCard(product);
+                        productsGrid.appendChild(card);
+                        
+                        // Initialize MFE after a small delay to ensure DOM is ready
+                        setTimeout(() => {
+                            const instanceId = initializeProductMFE(product);
+                            if (instanceId) {
+                                instanceIds.push({ productId: product.id, instanceId });
+                            }
+                        }, 10);
+                    });
+
+                    addStatus(`✅ Initialized ${products.length} products with Buy Now buttons`, 'success');
+                    addStatus(`ℹ️ Shadow DOM mode: ${useShadowDOM ? 'Enabled' : 'Disabled'}`, 'info');
+                    console.log('All product instances:', instanceIds);
+                } catch (error) {
+                    addStatus('❌ Error: ' + error.message, 'error');
+                    console.error('Initialization error:', error);
+                }
+            }
+
+            // Start initialization when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>
+
